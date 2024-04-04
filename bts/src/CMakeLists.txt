@@ -8,8 +8,19 @@
 # Create the custom_leaf_nodes library
 add_library(custom_leaf_nodes STATIC)
 
+option(USE_ROS "Use the ROS2 instead of YARP when communicating with the navigation stack" OFF)
+if(USE_ROS)
+    add_definitions(-DUSE_ROS)
+endif()
+
 add_subdirectory(interfaces)
 add_subdirectory(mock_components)
+
+if(USE_ROS)
+  find_package(ament_cmake REQUIRED)
+  find_package(action_msgs REQUIRED)
+  find_package(rclcpp REQUIRED)
+endif(USE_ROS)
 
 find_package(eCubPerceptionInterface REQUIRED)
 include_directories(
@@ -28,12 +39,31 @@ target_sources(custom_leaf_nodes
   common.cpp
 )
 
-target_link_libraries(custom_leaf_nodes
+if(USE_ROS)
+  ament_target_dependencies(custom_leaf_nodes 
+    "eCubPerceptionInterface"
+    "behaviortree_cpp_v3"
+    "YARP"
+    "rclcpp"
+    "action_msgs"
+  )
+  #target_link_libraries(custom_leaf_nodes
+  #PRIVATE
+  #  eCubPerceptionInterface::eCubPerceptionInterface
+  #  BT::behaviortree_cpp_v3
+  #  YARP::YARP_os
+  #  rclcpp::rclcpp
+  #  action_msgs::action_msgs
+  #  )
+else(
+  target_link_libraries(custom_leaf_nodes
   PRIVATE
     eCubPerceptionInterface::eCubPerceptionInterface
     BT::behaviortree_cpp_v3
     YARP::YARP_os
     )
+    )
+endif(USE_ROS)
 
 
 add_executable(run_bt)
