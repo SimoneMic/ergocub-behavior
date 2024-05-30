@@ -1,4 +1,4 @@
-#include <behaviortree_cpp_v3/action_node.h>
+include <behaviortree_cpp_v3/action_node.h>
 
 #include "robot_look_at_poi.h"
 #include "common.h"
@@ -41,10 +41,70 @@ RobotLookAtPOI::RobotLookAtPOI(string name, const NodeConfiguration& nc, pt::ptr
     this->gaze_controller.set_gain(0.01);
     none_counter = 0;
     last_poi = "";
+
+    m_nav_port.open(m_nav_port_name);
 }
 
 NodeStatus RobotLookAtPOI::tick()
 {
+    //if (m_is_sweeping)
+    //{
+    //    /* code */
+    //}
+    auto ms_wait = 500ms;
+    auto data = m_nav_port.read();
+    if (data != nullptr)
+    {
+        // data(0) = 0 for home, 1 for left, 2 for right, 3 for full sweep
+        switch (data->get(0).asInt32())
+        {
+            // The waits should be removed and implemented a parallel wait system for sweeping gaze
+            // Should return Running
+        case 0:
+            this->gaze_controller.look_at(m_zero_poi);
+            std::this_thread::sleep_for(ms_wait);
+            break;
+        case 1:
+            this->gaze_controller.look_at(m_down_poi);
+            std::this_thread::sleep_for(250ms);
+            this->gaze_controller.look_at(m_left_poi);
+            std::this_thread::sleep_for(ms_wait);
+            this->gaze_controller.look_at(m_down_poi);
+            std::this_thread::sleep_for(ms_wait);
+            this->gaze_controller.look_at(m_zero_poi);  // is it worth doing this?
+            std::this_thread::sleep_for(250ms);
+            break;
+        case 2:
+            this->gaze_controller.look_at(m_down_poi);
+            std::this_thread::sleep_for(250ms);
+            this->gaze_controller.look_at(m_right_poi);
+            std::this_thread::sleep_for(ms_wait);
+            this->gaze_controller.look_at(m_down_poi);
+            std::this_thread::sleep_for(ms_wait);
+            this->gaze_controller.look_at(m_zero_poi);  // is it worth doing this?
+            std::this_thread::sleep_for(250ms);
+            break;
+        case 3:
+            this->gaze_controller.look_at(m_down_poi);
+            std::this_thread::sleep_for(250ms);
+            this->gaze_controller.look_at(m_left_poi);
+            std::this_thread::sleep_for(ms_wait);
+            this->gaze_controller.look_at(m_down_poi);
+            std::this_thread::sleep_for(ms_wait);
+            this->gaze_controller.look_at(m_right_poi);
+            std::this_thread::sleep_for(ms_wait);
+            this->gaze_controller.look_at(m_down_poi);
+            std::this_thread::sleep_for(ms_wait);
+            this->gaze_controller.look_at(m_zero_poi);  // is it worth doing this?
+            std::this_thread::sleep_for(250ms);
+            break;        
+        default:
+            std::cout << "[RobotLookAtPOI::tick] Received the following unsupported command: " << data->get(0).asInt32() << std::endl;
+            break;
+        }
+        data->clear();
+    }
+    
     // Read poi type
     Optional<std::string> msg1 = getInput<std::string>("poi");
     if (!msg1)
