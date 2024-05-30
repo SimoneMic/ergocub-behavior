@@ -31,10 +31,10 @@ private:
     int none_counter;
     int none_counter_thr;
     std::string last_poi;
-    const std::vector<double> m_zero_poi{1.0, 0.0, 0.8};
-    const std::vector<double> m_down_poi{1.0, 0.0, 0.4};
-    const std::vector<double> m_left_poi{1.0, 1.0, 0.4};
-    const std::vector<double> m_right_poi{1.0, -1.0, 0.4};
+    const std::vector<double> m_zero_poi{1.0, 0.0, 0.4};
+    const std::vector<double> m_down_poi{1.0, 0.0, -0.4};
+    const std::vector<double> m_left_poi{1.0, 0.8, -0.4};
+    const std::vector<double> m_right_poi{1.0, -0.8, -0.4};
     yarp::os::BufferedPort<yarp::os::Bottle> m_nav_port;
     const std::string m_nav_port_name = "/BT/gaze-sweep/command:i";
 };

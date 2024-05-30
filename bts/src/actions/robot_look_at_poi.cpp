@@ -1,4 +1,4 @@
-include <behaviortree_cpp_v3/action_node.h>
+#include <behaviortree_cpp_v3/action_node.h>
 
 #include "robot_look_at_poi.h"
 #include "common.h"
@@ -47,12 +47,8 @@ RobotLookAtPOI::RobotLookAtPOI(string name, const NodeConfiguration& nc, pt::ptr
 
 NodeStatus RobotLookAtPOI::tick()
 {
-    //if (m_is_sweeping)
-    //{
-    //    /* code */
-    //}
-    auto ms_wait = 500ms;
-    auto data = m_nav_port.read();
+    auto ms_wait = 1500ms;  // TODO parameterize
+    auto data = m_nav_port.read(false);     // Read if I have to look around
     if (data != nullptr)
     {
         // data(0) = 0 for home, 1 for left, 2 for right, 3 for full sweep
@@ -66,40 +62,40 @@ NodeStatus RobotLookAtPOI::tick()
             return NodeStatus::SUCCESS;
             break;
         case 1:
-            this->gaze_controller.look_at(m_down_poi);
-            std::this_thread::sleep_for(250ms);
+            //this->gaze_controller.look_at(m_down_poi);
+            //std::this_thread::sleep_for(500ms);
             this->gaze_controller.look_at(m_left_poi);
             std::this_thread::sleep_for(ms_wait);
-            this->gaze_controller.look_at(m_down_poi);
-            std::this_thread::sleep_for(ms_wait);
+            //this->gaze_controller.look_at(m_down_poi);
+            //std::this_thread::sleep_for(ms_wait);
             this->gaze_controller.look_at(m_zero_poi);  // is it worth doing this?
-            std::this_thread::sleep_for(250ms);
+            std::this_thread::sleep_for(500ms);
             return NodeStatus::SUCCESS;
             break;
         case 2:
-            this->gaze_controller.look_at(m_down_poi);
-            std::this_thread::sleep_for(250ms);
+            //this->gaze_controller.look_at(m_down_poi);
+            //std::this_thread::sleep_for(500ms);
             this->gaze_controller.look_at(m_right_poi);
             std::this_thread::sleep_for(ms_wait);
-            this->gaze_controller.look_at(m_down_poi);
-            std::this_thread::sleep_for(ms_wait);
+            //this->gaze_controller.look_at(m_down_poi);
+            //std::this_thread::sleep_for(ms_wait);
             this->gaze_controller.look_at(m_zero_poi);  // is it worth doing this?
             std::this_thread::sleep_for(250ms);
             return NodeStatus::SUCCESS;
             break;
         case 3:
-            this->gaze_controller.look_at(m_down_poi);
-            std::this_thread::sleep_for(250ms);
+            //this->gaze_controller.look_at(m_down_poi);
+            //std::this_thread::sleep_for(500ms);
             this->gaze_controller.look_at(m_left_poi);
             std::this_thread::sleep_for(ms_wait);
-            this->gaze_controller.look_at(m_down_poi);
-            std::this_thread::sleep_for(ms_wait);
+            //this->gaze_controller.look_at(m_down_poi);
+            //std::this_thread::sleep_for(ms_wait);
             this->gaze_controller.look_at(m_right_poi);
-            std::this_thread::sleep_for(ms_wait);
-            this->gaze_controller.look_at(m_down_poi);
-            std::this_thread::sleep_for(ms_wait);
+            std::this_thread::sleep_for(2200ms);
+            //this->gaze_controller.look_at(m_down_poi);
+            //std::this_thread::sleep_for(ms_wait);
             this->gaze_controller.look_at(m_zero_poi);  // is it worth doing this?
-            std::this_thread::sleep_for(250ms);
+            std::this_thread::sleep_for(500ms);
             return NodeStatus::SUCCESS;
             break;        
         default:
@@ -154,10 +150,11 @@ NodeStatus RobotLookAtPOI::tick()
         }
         none_counter++;
         if(none_counter > 12){
-            setpoint.push_back(1);
-            setpoint.push_back(0);
-            setpoint.push_back(0.8);
-            this->gaze_controller.look_at(setpoint);
+            //setpoint.push_back(1);
+            //setpoint.push_back(0);
+            //setpoint.push_back(0.8);
+            //this->gaze_controller.look_at(setpoint);
+            this->gaze_controller.look_at(m_zero_poi);
         }
     }
 
