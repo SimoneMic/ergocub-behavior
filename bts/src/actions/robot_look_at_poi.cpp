@@ -63,6 +63,7 @@ NodeStatus RobotLookAtPOI::tick()
         case 0:
             this->gaze_controller.look_at(m_zero_poi);
             std::this_thread::sleep_for(ms_wait);
+            return NodeStatus::SUCCESS;
             break;
         case 1:
             this->gaze_controller.look_at(m_down_poi);
@@ -73,6 +74,7 @@ NodeStatus RobotLookAtPOI::tick()
             std::this_thread::sleep_for(ms_wait);
             this->gaze_controller.look_at(m_zero_poi);  // is it worth doing this?
             std::this_thread::sleep_for(250ms);
+            return NodeStatus::SUCCESS;
             break;
         case 2:
             this->gaze_controller.look_at(m_down_poi);
@@ -83,6 +85,7 @@ NodeStatus RobotLookAtPOI::tick()
             std::this_thread::sleep_for(ms_wait);
             this->gaze_controller.look_at(m_zero_poi);  // is it worth doing this?
             std::this_thread::sleep_for(250ms);
+            return NodeStatus::SUCCESS;
             break;
         case 3:
             this->gaze_controller.look_at(m_down_poi);
@@ -97,9 +100,10 @@ NodeStatus RobotLookAtPOI::tick()
             std::this_thread::sleep_for(ms_wait);
             this->gaze_controller.look_at(m_zero_poi);  // is it worth doing this?
             std::this_thread::sleep_for(250ms);
+            return NodeStatus::SUCCESS;
             break;        
         default:
-            std::cout << "[RobotLookAtPOI::tick] Received the following unsupported command: " << data->get(0).asInt32() << std::endl;
+            std::cout << "[RobotLookAtPOI::tick] Doing Nothing: " << data->get(0).asInt32() << std::endl;
             break;
         }
         data->clear();
