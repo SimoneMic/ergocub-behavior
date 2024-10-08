@@ -35,4 +35,6 @@ private:
     bool was_releasing;
     yarp::os::BufferedPort<yarp::os::Bottle> m_posePort;
     std::string m_posePortName;
+    yarp::os::BufferedPort<yarp::os::Bottle> m_stopPort;
+    std::string m_stopPortName;
 };

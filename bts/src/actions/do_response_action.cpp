@@ -43,8 +43,15 @@ DoResponseAction::DoResponseAction(string name, const NodeConfiguration& nc, pt:
     if (!yarp.connect(client_pose_name, m_posePortName))
     {
         std::cout << "Error! Could not connect to server " << m_posePortName << std::endl;
-        //std::this_thread::sleep_for(std::chrono::seconds(5));
     }
+
+    m_stopPortName = bt_config.get<std::string>("components.stop_action.port");
+    std::string client_stop_name = "/BT/" + m_stopPortName;
+    m_stopPort.open(client_stop_name);
+    //if (!yarp.connect(client_stop_name, m_stopPortName))
+    //{
+    //    std::cout << "Error! Could not connect to server " << m_posePortName << std::endl;
+    //}
 
     manipulation_client_.yarp().attachAsClient(man_client_port);
 
@@ -77,6 +84,13 @@ NodeStatus DoResponseAction::tick()
     }
     std::string has_box = msg3.value();
 
+    Optional<std::string> msg4 = getInput<std::string>("poi");
+    if (!msg4)
+    {
+        throw BT::RuntimeError("missing required input [message]: ", msg4.error() );
+    }
+    std::string poi = msg4.value();
+
     // CHECK IF AN ACTION IS IN EXECUTION
     auto fin = manipulation_client_.is_finished();
     std::cout << "DEBUGGING DO RESPONSE ACTION " << std::endl << std::endl << std::endl << std::endl;
@@ -97,6 +111,14 @@ NodeStatus DoResponseAction::tick()
             b.addFloat64(human_position(2));
             m_posePort.write();
         }
+        if (action=="stop")
+        {
+            yarp::os::Bottle & b = m_stopPort.prepare();
+            b.clear();
+            b.addInt32(1);  //stop cmd
+            m_stopPort.write();
+        }
+        
 
         // HAS_BOX COMMANDS
         if(has_box == "yes"){
@@ -132,6 +154,9 @@ NodeStatus DoResponseAction::tick()
         // HRI COMMANDS
         else{
             // ACTIONS
+            if(poi == "object"){
+                return NodeStatus::FAILURE;
+            }
             if(action == "wave" || action == "shake" || action == "t_pose"){
                 if(last_sent_command != action && focus == "yes"){
                     manipulation_client_.perform_joint_space_action(action);
@@ -157,5 +182,5 @@ NodeStatus DoResponseAction::tick()
 
 PortsList DoResponseAction::providedPorts()
 {
-    return {InputPort<std::string>("action"), InputPort<std::string>("focus"), InputPort<std::string>("has_box_in"), OutputPort<std::string>("has_box_out")};
+    return {InputPort<std::string>("poi"), InputPort<std::string>("action"), InputPort<std::string>("focus"), InputPort<std::string>("has_box_in"), OutputPort<std::string>("has_box_out")};
 }

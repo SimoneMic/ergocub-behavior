@@ -27,7 +27,7 @@
                 <ReactiveSequence>
                     <Condition ID="FocusDetected" focus="{the_focus}"/>
                     <Condition ID="ActionDetected" action="{the_action}"/>
-                    <Action ID="DoResponseAction" action="{the_action}" focus="{the_focus}" has_box_in="{the_has_box}" has_box_out="{the_has_box}"/>
+                    <Action ID="DoResponseAction" poi="{the_poi}" action="{the_action}" focus="{the_focus}" has_box_in="{the_has_box}" has_box_out="{the_has_box}"/>
                 </ReactiveSequence>
             </ReactiveFallback>
         </ReactiveSequence>

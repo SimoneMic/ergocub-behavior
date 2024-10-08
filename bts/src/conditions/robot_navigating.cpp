@@ -25,6 +25,9 @@ RobotNavigating::RobotNavigating(string name, const NodeConfiguration& nc, pt::p
 
 NodeStatus RobotNavigating::tick()
 {
+// TODO remove
+return NodeStatus::SUCCESS;
+
     yarp::os::Bottle *data = reader_port.read(false);
     if (data == nullptr){
         return NodeStatus::SUCCESS;
