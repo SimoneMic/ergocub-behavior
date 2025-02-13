@@ -33,6 +33,7 @@ target_link_libraries(custom_leaf_nodes
     eCubPerceptionInterface::eCubPerceptionInterface
     BT::behaviortree_cpp_v3
     YARP::YARP_os
+    YARP::YARP_dev
     )
 
 
